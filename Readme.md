@@ -2,10 +2,6 @@ Setup
 
 `yarn setup`
 
-Start backend
+Start application
 
-`yarn start-backend`
-
-Start frontend
-
-`yarn start-frontend`
+`yarn dev`
