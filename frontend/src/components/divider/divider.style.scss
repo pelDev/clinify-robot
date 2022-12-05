@@ -1,0 +1,7 @@
+@import "../../shared-styles/colors.scss";
+
+.divider {
+  height: 1px;
+  width: 100%;
+  background-color: var(--dividerThemeColor);
+}

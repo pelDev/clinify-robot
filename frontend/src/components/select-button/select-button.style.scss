@@ -1,0 +1,36 @@
+.select-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+
+  label {
+    font-size: 1.2em;
+    color: var(--textThemeColor2);
+  }
+
+  select {
+    width: 100%;
+    color: var(--textThemeColor1);
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: var(--bgThemeColor2);
+    outline: none;
+    border: none;
+    padding: 12px;
+    border-right: 12px solid transparent;
+
+    &:disabled {
+      opacity: 0.8;
+    }
+  }
+
+  .select__dark-mode {
+    color-scheme: dark;
+  }
+
+  .select__light-mode {
+    color-scheme: light;
+  }
+}

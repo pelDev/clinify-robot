@@ -1,0 +1,48 @@
+@import "../../shared-styles/variables.scss";
+
+.home-page {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+
+  header {
+    margin-bottom: 48px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .left {
+      h1 {
+        font-size: 3em;
+        margin: 0;
+        margin-bottom: 8px;
+      }
+
+      span {
+        font-size: 1.5em;
+        color: var(--textThemeColor2);
+      }
+    }
+
+    .right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1.6em;
+    }
+  }
+
+  .invoice-card {
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 75%;
+  }
+
+  @media (max-width: $breakpoint-phone) {
+    width: 100%;
+  }
+}

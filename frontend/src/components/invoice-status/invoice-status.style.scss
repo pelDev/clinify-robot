@@ -1,0 +1,48 @@
+.invoice-status {
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.8rem;
+  width: 90px;
+
+  .dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: aqua;
+  }
+}
+
+.paid {
+  background-color: #202b3e;
+  color: #6bb5ab;
+  .dot {
+    background-color: #6bb5ab;
+  }
+}
+
+.pending {
+  background-color: #2f2632;
+  color: #b98345;
+  .dot {
+    background-color: #b98345;
+  }
+}
+
+.draft {
+  background-color: #2a2d44;
+  color: var(--textThemeColor1);
+  .dot {
+    background-color: var(--textThemeColor1);
+  }
+}
+
+.invoice-status__light-mode {
+  border: 1px solid;
+  font-weight: 700;
+  background-color: transparent;
+}

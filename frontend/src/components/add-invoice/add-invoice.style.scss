@@ -1,0 +1,25 @@
+@import "../../shared-styles/colors.scss";
+
+button {
+  padding: 8px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  outline: none;
+  background-color: $purple100;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  .icon {
+    color: #fff;
+  }
+}

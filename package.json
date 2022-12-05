@@ -1,0 +1,19 @@
+{
+  "name": "clinify-robot-backend",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Pelumi",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "setup": "yarn && cd backend && yarn && cd .. && cd frontend && yarn",
+    "start-backend": "cd backend && yarn start",
+    "start-frontend": "cd frontend && yarn start",
+    "build-frontend": "cd frontend && yarn build",
+    "start": "concurrently \"yarn start-backend\" \"yarn start-frontend\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn setup && yarn build-frontend"
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

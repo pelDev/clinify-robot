@@ -1,0 +1,42 @@
+@import "colors.scss";
+
+$themes: (
+  bgThemeColor1: (
+    darkTheme: $purple700,
+    lightTheme: $grey100,
+  ),
+  bgThemeColor2: (
+    darkTheme: $purple500,
+    lightTheme: $grey200,
+  ),
+  textThemeColor1: (
+    darkTheme: $grey100,
+    lightTheme: $black,
+  ),
+  textThemeColor2: (
+    darkTheme: $grey500,
+    lightTheme: $grey700,
+  ),
+  dividerThemeColor: (
+    darkTheme: $grey100,
+    lightTheme: $purple100,
+  ),
+);
+
+@mixin styles($mode) {
+  @each $key, $map in $themes {
+    @each $prop, $color in $map {
+      @if $prop == $mode {
+        --#{$key}: #{$color};
+      }
+    }
+  }
+}
+
+.dark-mode {
+  @include styles("darkTheme");
+}
+
+.light-mode {
+  @include styles("lightTheme");
+}

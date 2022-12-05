@@ -1,0 +1,123 @@
+@import "../../../../shared-styles/variables.scss";
+@import "../../../../shared-styles/colors.scss";
+
+.invoice-card {
+  .desktop {
+    display: grid;
+    grid-template-columns: repeat(5, 20%);
+
+    .item {
+      padding: 0 8px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 1.5em;
+      display: block;
+      text-align: left;
+
+      margin-top: auto;
+      margin-bottom: auto;
+
+      &:nth-child(1) {
+        span {
+          &:nth-child(1) {
+            color: var(--textThemeColor2);
+            font-weight: normal;
+          }
+        }
+      }
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        color: var(--textThemeColor2);
+      }
+
+      &:nth-child(1),
+      &:nth-child(4) {
+        font-weight: 600;
+      }
+
+      &:nth-child(4) {
+        text-align: right;
+      }
+
+      &:nth-child(5) {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 16px;
+
+        .arrow-right {
+          color: $purple100;
+        }
+      }
+    }
+  }
+
+  .mobile {
+    display: none;
+    font-size: 1.5em;
+
+    .row {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:nth-child(1) {
+        div {
+          &:nth-child(1) {
+            font-weight: 600;
+            span {
+              &:nth-child(1) {
+                color: var(--textThemeColor2);
+                font-weight: normal;
+              }
+            }
+          }
+
+          &:nth-child(2) {
+            color: var(--textThemeColor2);
+          }
+        }
+      }
+
+      &:nth-child(2) {
+        div {
+          &:nth-child(1) {
+            span {
+              display: block;
+              margin-bottom: 4px;
+
+              &:last-child {
+                margin-bottom: 0;
+                font-weight: 600;
+              }
+
+              &:nth-child(1) {
+                color: var(--textThemeColor2);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-phone) {
+    .desktop {
+      display: none;
+    }
+
+    .mobile {
+      display: block;
+    }
+  }
+}
