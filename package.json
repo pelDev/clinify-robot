@@ -11,8 +11,8 @@
     "start-frontend": "cd frontend && yarn start",
     "build-frontend": "cd frontend && yarn build",
     "dev": "concurrently \"yarn start-backend\" \"yarn start-frontend\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn setup && yarn build-frontend",
-    "start": "yarn start-backend"
+    "start": "yarn start-backend",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd frontend && yarn build"
   },
   "dependencies": {
     "concurrently": "^7.6.0"
