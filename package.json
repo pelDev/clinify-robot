@@ -10,8 +10,9 @@
     "start-backend": "cd backend && yarn start",
     "start-frontend": "cd frontend && yarn start",
     "build-frontend": "cd frontend && yarn build",
-    "start": "concurrently \"yarn start-backend\" \"yarn start-frontend\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn setup && yarn build-frontend"
+    "dev": "concurrently \"yarn start-backend\" \"yarn start-frontend\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn setup && yarn build-frontend",
+    "start": "yarn start-backend"
   },
   "dependencies": {
     "concurrently": "^7.6.0"
