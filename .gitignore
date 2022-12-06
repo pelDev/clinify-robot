@@ -5,6 +5,7 @@ node_modules
 .pnp.json
 
 development.env
+production.env
 
 # Logs
 logs
