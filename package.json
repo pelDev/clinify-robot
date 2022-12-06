@@ -11,7 +11,7 @@
     "start-frontend": "cd frontend && yarn start",
     "build-frontend": "cd frontend && yarn build",
     "dev": "cd frontend && yarn build && cd .. && cd backend && yarn start:dev",
-    "start": "cd backend && yarn start:prod",
+    "start": "cd backend && yarn build && yarn start:prod",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn setup && cd frontend && yarn build"
   },
   "dependencies": {
