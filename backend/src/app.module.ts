@@ -15,9 +15,9 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../../frontend', 'build'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '../../frontend', 'build'),
+    // }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
