@@ -65,7 +65,7 @@
     }
   }
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: $breakpoint-phone) {
     flex-direction: column;
 
     .page-container {

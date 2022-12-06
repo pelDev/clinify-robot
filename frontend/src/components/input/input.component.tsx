@@ -12,6 +12,7 @@ interface InputProps {
   maxLength?: number;
   required?: boolean;
   disabled?: boolean;
+  min?: number | string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -24,6 +25,7 @@ const Input: React.FC<InputProps> = ({
   type,
   required = false,
   disabled = false,
+  min,
 }) => {
   const theme = useTheme();
 
@@ -40,6 +42,7 @@ const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         maxLength={maxLength}
         required={required}
+        min={min}
         disabled={disabled}
       />
     </div>

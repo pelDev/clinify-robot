@@ -1,7 +1,7 @@
 import React from "react";
 import "./button.style.scss";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "danger";
 
 interface ButtonProps {
   type: "button" | "submit";

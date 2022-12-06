@@ -14,8 +14,12 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      amount\n      terms\n      description\n    }\n  }": types.GetInvoiceDocument,
-    "\n  mutation saveNewInvoice($createInvoiceInput: CreateInvoiceInput!) {\n    createInvoice(createInvoiceInput: $createInvoiceInput) {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n": types.SaveNewInvoiceDocument,
     "\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n": types.GetInvoicesDocument,
+    "\n  query GetInvoiceDetails($id: Int!) {\n    getInvoice(id: $id)\n    {\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      amount\n    }\n  }\n": types.GetInvoiceDetailsDocument,
+    "\n  mutation updateInvoice($updateInvoiceInput: UpdateInvoiceInput!) {\n    updateInvoice(updateInvoiceInput: $updateInvoiceInput){\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      due_date\n      terms\n      amount\n      description\n      status\n    }\n  }\n": types.UpdateInvoiceDocument,
+    "\n  mutation saveNewInvoice($createInvoiceInput: CreateInvoiceInput!) {\n    createInvoice(createInvoiceInput: $createInvoiceInput) {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n": types.SaveNewInvoiceDocument,
+    "\n  mutation deleteInvoiceById($id: Int!) {\n    removeInvoice(id: $id) {\n      id\n    }\n  }\n": types.DeleteInvoiceByIdDocument,
+    "\n  mutation markInvoiceAsPaid($id: Int!) {\n    markAsPaid(id: $id) {\n      id,\n      status\n    }\n  }\n": types.MarkInvoiceAsPaidDocument,
 };
 
 /**
@@ -25,11 +29,27 @@ export function gql(source: "\n  query GetInvoice($id: Int!) {\n    getInvoice(i
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"): (typeof documents)["\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetInvoiceDetails($id: Int!) {\n    getInvoice(id: $id)\n    {\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      amount\n    }\n  }\n"): (typeof documents)["\n  query GetInvoiceDetails($id: Int!) {\n    getInvoice(id: $id)\n    {\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      amount\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation updateInvoice($updateInvoiceInput: UpdateInvoiceInput!) {\n    updateInvoice(updateInvoiceInput: $updateInvoiceInput){\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      due_date\n      terms\n      amount\n      description\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation updateInvoice($updateInvoiceInput: UpdateInvoiceInput!) {\n    updateInvoice(updateInvoiceInput: $updateInvoiceInput){\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      due_date\n      terms\n      amount\n      description\n      status\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation saveNewInvoice($createInvoiceInput: CreateInvoiceInput!) {\n    createInvoice(createInvoiceInput: $createInvoiceInput) {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation saveNewInvoice($createInvoiceInput: CreateInvoiceInput!) {\n    createInvoice(createInvoiceInput: $createInvoiceInput) {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"): (typeof documents)["\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n"];
+export function gql(source: "\n  mutation deleteInvoiceById($id: Int!) {\n    removeInvoice(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation deleteInvoiceById($id: Int!) {\n    removeInvoice(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation markInvoiceAsPaid($id: Int!) {\n    markAsPaid(id: $id) {\n      id,\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation markInvoiceAsPaid($id: Int!) {\n    markAsPaid(id: $id) {\n      id,\n      status\n    }\n  }\n"];
 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

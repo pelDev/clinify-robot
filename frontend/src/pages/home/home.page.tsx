@@ -3,11 +3,12 @@ import InvoiceCard from "../../components/card/cards/invoice/invoice.card";
 import { useTheme } from "../../hooks/useTheme";
 import "./home.style.scss";
 import { useQuery } from "@apollo/client";
-import { gql } from "../../__generated__/gql";
 import { InvoiceStatusValues } from "../../components/invoice-status/invoice-status.component";
 import AddInvoice from "../../components/add-invoice/add-invoice.component";
 import Select from "../../components/select/select.component";
 import InvoiceForm from "../../components/forms/invoice/invoice.form";
+import { useNavigate } from "react-router-dom";
+import { GET_INVOICES } from "../../queries";
 
 const statuses = ["All", "Paid", "Pending", "Draft"];
 
@@ -22,20 +23,6 @@ interface GetInvoiceData {
     name: string;
   };
 }
-
-export const GET_INVOICES = gql(`
-  query GetInvoices {
-    invoices {
-      id
-      from {
-        name
-      }
-      due_date
-      amount
-      status
-    }
-  }
-`);
 
 interface HomePageProps {}
 
@@ -77,6 +64,12 @@ const HomePage: React.FC<HomePageProps> = () => {
   const openInvoiceForm = () => setIsFormOpen(true);
   const closeInvoiceForm = () => setIsFormOpen(false);
 
+  const navigate = useNavigate();
+
+  const handleInvoiceClick = (id: number) => () => {
+    navigate(`/invoice?id=${id}`);
+  };
+
   if (loading) return <p>Loading...</p>;
 
   if (error) return <p>Error: {error.message}</p>;
@@ -107,6 +100,7 @@ const HomePage: React.FC<HomePageProps> = () => {
             from={invoice.from.name}
             amount={invoice.amount}
             status={invoice.status as InvoiceStatusValues}
+            onClick={handleInvoiceClick(invoice.id)}
           />
         ))}
       </div>

@@ -8,9 +8,13 @@ import { AppService } from './app.service';
 import { InvoicesModule } from './invoices/invoices.module';
 import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { getEnvPath } from './common/helper/env.helper';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
+const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath, isGlobal: true }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../frontend', 'build'),
     }),
@@ -18,11 +22,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: 'postgres://clinify_robot_user:clinify_robot_password@127.0.0.1:5432/clinify_robot_db',
-      entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get('DATABASE_URL'),
+        entities: ['dist/**/*.entity{.ts,.js}'],
+        synchronize: true,
+        // ssl: { rejectUnauthorized: false },
+      }),
+      inject: [ConfigService],
     }),
     InvoicesModule,
     UsersModule,

@@ -23,4 +23,9 @@
     background-color: var(--bgThemeColor2);
     color: var(--textThemeColor1);
   }
+
+  &__danger {
+    background-color: $danger;
+    color: white;
+  }
 }

@@ -12,6 +12,7 @@ interface InvoiceCardProps {
   date: string;
   amount: number;
   from: string;
+  onClick: VoidFunction;
 }
 
 const InvoiceCard: React.FC<InvoiceCardProps> = ({
@@ -20,9 +21,10 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
   amount,
   date,
   from,
+  onClick,
 }) => {
   return (
-    <div className="invoice-card">
+    <div className="invoice-card" onClick={onClick}>
       <Card>
         <div className="desktop">
           <div className="item">

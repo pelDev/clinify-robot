@@ -1,12 +1,16 @@
 import { FormEvent, useEffect, useState } from "react";
 import "./invoice.style.scss";
 import { useMutation, useQuery } from "@apollo/client";
-import { gql } from "../../../__generated__/gql";
 import Input from "../../input/input.component";
 import { formatDateToYYYMMDD } from "../../../utils/helpers";
 import SelectButton from "../../select-button/select-button.component";
 import Button from "../../button/button.component";
-import { GET_INVOICES } from "../../../pages/home/home.page";
+import {
+  CREATE_INVOICE,
+  GET_INVOICE,
+  GET_INVOICES,
+  UPDATE_INVOICE,
+} from "../../../queries";
 
 interface InvoiceFormProps {
   closeForm: () => void;
@@ -14,38 +18,6 @@ interface InvoiceFormProps {
 }
 
 const terms = ["Next 30 Days", "Next 90 Days"];
-
-const GET_INVOICE = gql(`
-  query GetInvoice($id: Int!) {
-    getInvoice(id: $id) {
-      id
-      from {
-        email
-      }
-      to {
-        email
-      }
-      created_at
-      due_date
-      amount
-      terms
-      description
-    }
-  }`);
-
-const CREATE_INVOICE = gql(`
-  mutation saveNewInvoice($createInvoiceInput: CreateInvoiceInput!) {
-    createInvoice(createInvoiceInput: $createInvoiceInput) {
-      id
-      from {
-        name
-      }
-      due_date
-      amount
-      status
-    }
-  }
-`);
 
 const InvoiceForm: React.FC<InvoiceFormProps> = ({
   closeForm,
@@ -79,6 +51,20 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     }
   );
 
+  const [updateInvoice, { loading: updatingInvoice }] = useMutation(
+    UPDATE_INVOICE,
+    {
+      variables: {
+        updateInvoiceInput: {
+          description,
+          id: selectedInvoiceId || -1,
+          terms: selectedTerms,
+          amount,
+        },
+      },
+    }
+  );
+
   const getSelectedIndexTerms = () => {
     if (!terms) return "";
 
@@ -106,36 +92,48 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    createInvoice({
-      onCompleted: (data) => {
-        console.log("Invoice created", data);
-        closeForm();
-      },
-      onError: (error) => {
-        console.log("Error creating invoice", error.message);
-      },
-      update: (cache, { data }) => {
-        const existingInvoices = cache.readQuery({
-          query: GET_INVOICES,
-        });
-
-        if (existingInvoices && data) {
-          const newInvoices = [
-            ...existingInvoices.invoices,
-            data.createInvoice,
-          ];
-
-          cache.writeQuery({
+    if (!selectedInvoiceId) {
+      createInvoice({
+        onCompleted: (data) => {
+          console.log("Invoice created", data);
+          closeForm();
+        },
+        onError: (error) => {
+          console.log("Error creating invoice", error.message);
+        },
+        update: (cache, { data }) => {
+          const existingInvoices = cache.readQuery({
             query: GET_INVOICES,
-            data: { invoices: newInvoices },
           });
-        }
-      },
-    });
+
+          if (existingInvoices && data) {
+            const newInvoices = [
+              ...existingInvoices.invoices,
+              data.createInvoice,
+            ];
+
+            cache.writeQuery({
+              query: GET_INVOICES,
+              data: { invoices: newInvoices },
+            });
+          }
+        },
+      });
+    } else {
+      updateInvoice({
+        onCompleted: (data) => {
+          console.log("Invoice updated", data);
+          closeForm();
+        },
+        onError: (error) => {
+          console.log("Error updation invoice", error.message);
+        },
+      });
+    }
   };
 
   const handleClose = () => {
-    if (creatingInvoice) return;
+    if (creatingInvoice || updatingInvoice) return;
 
     closeForm();
   };
@@ -205,17 +203,20 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           value={amount.toString()}
           setValue={(e: string) => setAmount(+e)}
           required
+          min={0}
           id="amount"
         />
 
-        <SelectButton
-          label="Save as draft?"
-          selected={getSelectedIndexDraft()}
-          onSelect={(e) => setSaveAsDraft(e === "Yes" ? 1 : 0)}
-          options={["Yes", "No"]}
-          id="saveAsDraft"
-          required
-        />
+        {!selectedInvoiceId && (
+          <SelectButton
+            label="Save as draft?"
+            selected={getSelectedIndexDraft()}
+            onSelect={(e) => setSaveAsDraft(e === "Yes" ? 1 : 0)}
+            options={["Yes", "No"]}
+            id="saveAsDraft"
+            required
+          />
+        )}
 
         <div className="actions">
           <Button
@@ -229,7 +230,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
             title={selectedInvoiceId ? "Save changes" : "Save"}
             type="submit"
             variant="primary"
-            disabled={creatingInvoice}
+            disabled={creatingInvoice || updatingInvoice}
           />
         </div>
       </div>
