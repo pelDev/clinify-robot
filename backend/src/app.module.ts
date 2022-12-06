@@ -15,9 +15,9 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '../../frontend', 'build'),
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../frontend', 'build'),
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -29,10 +29,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
         url: configService.get('DATABASE_URL'),
         entities: ['dist/**/*.entity{.ts,.js}'],
         synchronize: true,
-        ssl:
-          process.env.NODE_ENV === 'production'
-            ? { rejectUnauthorized: false }
-            : undefined,
+        ssl: { rejectUnauthorized: false },
       }),
       inject: [ConfigService],
     }),
