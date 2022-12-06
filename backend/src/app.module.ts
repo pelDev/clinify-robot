@@ -29,7 +29,10 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
         url: configService.get('DATABASE_URL'),
         entities: ['dist/**/*.entity{.ts,.js}'],
         synchronize: true,
-        // ssl: { rejectUnauthorized: false },
+        ssl:
+          process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : undefined,
       }),
       inject: [ConfigService],
     }),
