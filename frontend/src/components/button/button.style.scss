@@ -15,6 +15,11 @@
     opacity: 0.7;
   }
 
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
   &__primary {
     background-color: $purple100;
   }

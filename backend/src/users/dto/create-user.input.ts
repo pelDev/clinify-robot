@@ -11,7 +11,7 @@ export class CreateUserInput {
   @Field()
   city: string;
 
-  @IsNumber()
+  @IsString()
   @Field()
   postcode: string;
 
