@@ -1,7 +1,9 @@
-Setup
+RUN ON LOCAL
 
 `yarn setup`
-
-Start application
-
 `yarn dev`
+
+TEST USERS EMAILS
+
+janedoe@clinify.com
+johndoe@clinify.com
