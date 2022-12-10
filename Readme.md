@@ -7,3 +7,9 @@ TEST USERS EMAILS
 
 janedoe@clinify.com
 johndoe@clinify.com
+
+RUN Tests
+
+In backend folder run:
+
+`yarn test`
