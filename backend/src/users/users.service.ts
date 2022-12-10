@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 // import { UpdateUserInput } from './dto/update-user.input';
 
@@ -29,11 +30,24 @@ export class UsersService {
     return this.userRepository.findOneOrFail({ where: { email } });
   }
 
-  // update(id: number, updateUserInput: UpdateUserInput) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(id: number, updateUserInput: UpdateUserInput) {
+    const user = await this.userRepository.findOneOrFail({
+      where: { id },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.userRepository.save({
+      ...user,
+      ...updateUserInput,
+    });
+  }
+
+  async remove(id: number) {
+    const invoice = await this.userRepository.findOneOrFail({
+      where: { id },
+    });
+
+    const result = await this.userRepository.remove(invoice);
+
+    return { ...result, id };
   }
 }

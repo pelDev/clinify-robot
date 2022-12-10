@@ -54,15 +54,15 @@ export class Invoice {
 
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
+    default: () => 'NOW()',
   })
   @Field()
   created_at: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
+    default: () => 'NOW()',
+    onUpdate: 'NOW()',
   })
   @Field()
   updated_at: Date;
