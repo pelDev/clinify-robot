@@ -4,7 +4,7 @@
 .invoice-card {
   .desktop {
     display: grid;
-    grid-template-columns: repeat(5, 20%);
+    grid-template-columns: 8% repeat(4, 23%);
 
     .item {
       padding: 0 8px;

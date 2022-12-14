@@ -11,26 +11,26 @@ export class UpdateUserInput {
 
   @Optional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   street?: string;
 
   @Optional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   city?: string;
 
   @Optional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   postcode?: string;
 
   @Optional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   country?: string;
 
   @Optional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   name?: string;
 }

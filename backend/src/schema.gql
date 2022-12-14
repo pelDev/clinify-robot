@@ -85,8 +85,7 @@ input UpdateInvoiceInput {
   id: Int!
   terms: String!
   description: String!
-  amount: Int = 0
-  items: [UpdateItemInput!]!
+  items: [UpdateItemInput!]
 }
 
 input UpdateItemInput {
@@ -108,9 +107,9 @@ input CreateUserInput {
 
 input UpdateUserInput {
   id: Int!
-  street: String!
-  city: String!
-  postcode: String!
-  country: String!
-  name: String!
+  street: String
+  city: String
+  postcode: String
+  country: String
+  name: String
 }

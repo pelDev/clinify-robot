@@ -31,7 +31,6 @@ const createInvoiceInput: CreateInvoiceInput = {
 const updateInvoiceInput: UpdateInvoiceInput = {
   id: invoiceId,
   description: chance.name(),
-  amount: 200,
   terms: 'Next 30 Days',
   items: [{ name: 'Test', price: 20, quantity: 1 }],
 };
