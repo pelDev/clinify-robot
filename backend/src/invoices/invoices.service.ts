@@ -85,7 +85,17 @@ export class InvoicesService {
   }
 
   async findAll(): Promise<Invoice[]> {
-    return this.invoiceRepository.find();
+    const invoices = await this.invoiceRepository.find({
+      relations: ['items'],
+    });
+
+    for (const invoice of invoices) {
+      let amount = 0;
+      invoice.items?.forEach((e) => (amount += e.price * e.quantity));
+      invoice.amount = amount;
+    }
+
+    return invoices;
   }
 
   async findOne(id: number): Promise<Invoice> {
@@ -159,11 +169,18 @@ export class InvoicesService {
     delete updateInvoiceInput.items;
     delete invoice.items;
 
-    return this.invoiceRepository.save({
+    const savedInvoice = await this.invoiceRepository.save({
       ...invoice,
       ...updateInvoiceInput,
       due_date: due_date.toISOString(),
     });
+
+    savedInvoice.items = items as Item[];
+    let amount = 0;
+    items.forEach((e) => (amount += e.price * e.quantity));
+    savedInvoice.amount = amount;
+
+    return savedInvoice;
   }
 
   async remove(id: number): Promise<Invoice> {

@@ -12,7 +12,12 @@ export const GET_INVOICE = gql(`
       }
       created_at
       due_date
-      amount
+      items {
+        id
+        name
+        quantity
+        price
+      }
       terms
       description
     }

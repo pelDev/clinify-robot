@@ -24,6 +24,7 @@ interface InvoiceFormProps {
 const terms = ["Next 30 Days", "Next 90 Days"];
 
 interface ItemInput {
+  id?: number | undefined;
   name: string;
   quantity: number;
   price: number;
@@ -34,7 +35,6 @@ interface InvoiceFormType {
   to: string;
   description: string;
   createdDate: Date;
-  amount: number;
   saveAsDraft: boolean;
   selectedTerms: string;
   items: ItemInput[];
@@ -61,7 +61,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     to: "",
     description: "",
     createdDate: new Date(),
-    amount: 0,
     saveAsDraft: false,
     selectedTerms: "",
     items: [],
@@ -90,7 +89,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           id: selectedInvoiceId || -1,
           terms: form.selectedTerms,
           description: form.description,
-          amount: form.amount,
+          items: form.items,
         },
       },
     }
@@ -116,7 +115,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       onChange("description", data.getInvoice.description);
       onChange("createdDate", new Date(data.getInvoice.created_at));
       onChange("selectedTerms", data.getInvoice.terms);
-      onChange("amount", data.getInvoice.amount);
+      onChange(
+        "items",
+        data.getInvoice.items.map((item) => {
+          return { ...item, __typename: undefined };
+        })
+      );
     }
   }, [data]);
 
@@ -333,16 +337,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           setValue={(val) => onChange("description", val)}
           required
           id="descriptiom"
-        />
-
-        <Input
-          label="Amount"
-          type="number"
-          value={form.amount.toString()}
-          setValue={(e: string) => onChange("amount", +e)}
-          required
-          min={0}
-          id="amount"
         />
 
         {!selectedInvoiceId && (

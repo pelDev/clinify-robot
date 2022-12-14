@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
-    "\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      amount\n      terms\n      description\n    }\n  }": types.GetInvoiceDocument,
+    "\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      items {\n        id\n        name\n        quantity\n        price\n      }\n      terms\n      description\n    }\n  }": types.GetInvoiceDocument,
     "\n  query GetInvoices {\n    invoices {\n      id\n      from {\n        name\n      }\n      due_date\n      amount\n      status\n    }\n  }\n": types.GetInvoicesDocument,
     "\n  query GetInvoiceDetails($id: Int!) {\n    getInvoice(id: $id)\n    {\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      amount\n    }\n  }\n": types.GetInvoiceDetailsDocument,
     "\n  mutation updateInvoice($updateInvoiceInput: UpdateInvoiceInput!) {\n    updateInvoice(updateInvoiceInput: $updateInvoiceInput){\n      id\n      from {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      to {\n        name\n        street\n        city\n        postcode\n        country\n        email\n      }\n      due_date\n      terms\n      amount\n      description\n      status\n    }\n  }\n": types.UpdateInvoiceDocument,
@@ -25,7 +25,7 @@ const documents = {
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      amount\n      terms\n      description\n    }\n  }"): (typeof documents)["\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      amount\n      terms\n      description\n    }\n  }"];
+export function gql(source: "\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      items {\n        id\n        name\n        quantity\n        price\n      }\n      terms\n      description\n    }\n  }"): (typeof documents)["\n  query GetInvoice($id: Int!) {\n    getInvoice(id: $id) {\n      id\n      from {\n        email\n      }\n      to {\n        email\n      }\n      created_at\n      due_date\n      items {\n        id\n        name\n        quantity\n        price\n      }\n      terms\n      description\n    }\n  }"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
