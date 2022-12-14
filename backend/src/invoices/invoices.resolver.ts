@@ -7,6 +7,7 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
+import { Item } from 'src/items/entities/item.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
 import { UpdateInvoiceInput } from './dto/update-invoice.input';
@@ -42,7 +43,7 @@ export class InvoicesResolver {
   @Mutation((returns) => Invoice)
   updateInvoice(
     @Args('updateInvoiceInput') updateInvoiceInput: UpdateInvoiceInput,
-  ): Promise<UpdateInvoiceInput> {
+  ): Promise<Invoice> {
     return this.invoiceService.updateInvoice(updateInvoiceInput);
   }
 
@@ -54,6 +55,11 @@ export class InvoicesResolver {
   @ResolveField(() => User)
   from(@Parent() invoice: Invoice): Promise<User> {
     return this.invoiceService.getUser(invoice.fromId);
+  }
+
+  @ResolveField(() => [Item])
+  items(@Parent() invoice: Invoice): Promise<Item[]> {
+    return this.invoiceService.getItems(invoice.id);
   }
 
   @ResolveField(() => User)

@@ -11,6 +11,10 @@ import {
   GET_INVOICES,
   UPDATE_INVOICE,
 } from "../../../queries";
+import { toast } from "react-toastify";
+import CustomTable from "../../custom-table/custom-table.component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 
 interface InvoiceFormProps {
   closeForm: () => void;
@@ -19,33 +23,60 @@ interface InvoiceFormProps {
 
 const terms = ["Next 30 Days", "Next 90 Days"];
 
+interface ItemInput {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface InvoiceFormType {
+  from: string;
+  to: string;
+  description: string;
+  createdDate: Date;
+  amount: number;
+  saveAsDraft: boolean;
+  selectedTerms: string;
+  items: ItemInput[];
+}
+
+const tableHead = {
+  name: "Item name",
+  quantity: "Qty",
+  price: "Price",
+  total: "Total",
+  action: "",
+};
+
 const InvoiceForm: React.FC<InvoiceFormProps> = ({
   closeForm,
   selectedInvoiceId = null,
 }) => {
-  const { loading, error, data, refetch } = useQuery(GET_INVOICE, {
+  const { loading, data } = useQuery(GET_INVOICE, {
     variables: { id: selectedInvoiceId || -1 },
   });
 
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [createdDate, setCreatedDate] = useState<Date>(new Date());
-  const [selectedTerms, setSelectedTerms] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
-  const [saveAsDraft, setSaveAsDraft] = useState<1 | 0>(0);
+  const [form, setForm] = useState<InvoiceFormType>({
+    from: "",
+    to: "",
+    description: "",
+    createdDate: new Date(),
+    amount: 0,
+    saveAsDraft: false,
+    selectedTerms: "",
+    items: [],
+  });
+
+  const onChange = (name: string, value: any) =>
+    setForm((prev) => ({ ...prev, [name]: value }));
 
   const [createInvoice, { loading: creatingInvoice }] = useMutation(
     CREATE_INVOICE,
     {
       variables: {
         createInvoiceInput: {
-          from,
-          to,
-          description,
-          terms: selectedTerms,
-          amount,
-          saveAsDraft,
+          ...form,
+          terms: form.selectedTerms,
         },
       },
     }
@@ -56,10 +87,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     {
       variables: {
         updateInvoiceInput: {
-          description,
           id: selectedInvoiceId || -1,
-          terms: selectedTerms,
-          amount,
+          terms: form.selectedTerms,
+          description: form.description,
+          amount: form.amount,
         },
       },
     }
@@ -68,24 +99,24 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
   const getSelectedIndexTerms = () => {
     if (!terms) return "";
 
-    const idx = terms.indexOf(selectedTerms);
+    const idx = terms.indexOf(form.selectedTerms);
 
     return idx;
   };
 
   const getSelectedIndexDraft = () => {
-    if (saveAsDraft === 1) return 0;
+    if (form.saveAsDraft) return 0;
     else return 1;
   };
 
   useEffect(() => {
     if (data) {
-      setFrom(data.getInvoice.from.email);
-      setTo(data.getInvoice.to.email);
-      setDescription(data.getInvoice.description);
-      setCreatedDate(new Date(data.getInvoice.created_at));
-      setSelectedTerms(data.getInvoice.terms);
-      setAmount(data.getInvoice.amount);
+      onChange("from", data.getInvoice.from.email);
+      onChange("to", data.getInvoice.to.email);
+      onChange("description", data.getInvoice.description);
+      onChange("createdDate", new Date(data.getInvoice.created_at));
+      onChange("selectedTerms", data.getInvoice.terms);
+      onChange("amount", data.getInvoice.amount);
     }
   }, [data]);
 
@@ -94,12 +125,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
     if (!selectedInvoiceId) {
       createInvoice({
-        onCompleted: (data) => {
-          console.log("Invoice created", data);
+        onCompleted: () => {
+          toast("Invoice created successfully", {
+            type: "success",
+          });
           closeForm();
         },
         onError: (error) => {
-          console.log("Error creating invoice", error.message);
+          toast(error.message, { type: "error" });
         },
         update: (cache, { data }) => {
           const existingInvoices = cache.readQuery({
@@ -121,12 +154,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       });
     } else {
       updateInvoice({
-        onCompleted: (data) => {
-          console.log("Invoice updated", data);
+        onCompleted: () => {
+          toast("Invoice updated successfully");
           closeForm();
         },
         onError: (error) => {
-          console.log("Error updation invoice", error.message);
+          toast(error.message, { type: "error" });
         },
       });
     }
@@ -136,6 +169,111 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     if (creatingInvoice || updatingInvoice) return;
 
     closeForm();
+  };
+
+  const headRow = () => {
+    return Object.keys(tableHead).map((key, index) => (
+      <td key={index}>
+        <span>{(tableHead as Record<string, any>)[key]}</span>
+      </td>
+    ));
+  };
+
+  const handleRemoveItem = (index: number) => () => {
+    setForm((prev) => {
+      const v = { ...prev };
+
+      v.items = v.items.slice(0, index).concat(v.items.slice(index + 1));
+
+      return v;
+    });
+  };
+
+  const tableRows = (rowData: { item: ItemInput; index: number }) => {
+    const { item, index } = rowData;
+
+    const tableCell = Object.keys(tableHead);
+
+    const columnData = tableCell.map((keyD, i) => {
+      if (keyD === "name") {
+        return (
+          <td key={i}>
+            <Input
+              id={"item-input-" + index + i}
+              type="text"
+              value={form.items[index]?.name || ""}
+              label=""
+              required
+              setValue={(val) =>
+                setForm((prev) => {
+                  const v = { ...prev };
+
+                  v.items[index].name = val;
+
+                  return v;
+                })
+              }
+            />
+          </td>
+        );
+      }
+
+      if (keyD === "price" || keyD === "quantity") {
+        return (
+          <td key={i}>
+            <Input
+              id={"item-input-" + index + i}
+              type="number"
+              value={
+                form.items[index] ? form.items[index][keyD].toString() : ""
+              }
+              label=""
+              required
+              min={1}
+              setValue={(val) =>
+                setForm((prev) => {
+                  const v = { ...prev };
+
+                  v.items[index][keyD] = +val;
+
+                  return v;
+                })
+              }
+            />
+          </td>
+        );
+      }
+
+      if (keyD === "total") {
+        return <td key={i}>{item.price * item.quantity}</td>;
+      }
+
+      if (keyD === "action") {
+        return (
+          <td key={i}>
+            <button
+              type="button"
+              className="delete-button"
+              onClick={handleRemoveItem(index)}
+            >
+              <FontAwesomeIcon
+                icon={solid("trash")}
+                className="icon"
+                size="1x"
+              />
+            </button>
+          </td>
+        );
+      }
+
+      return <td key={i}>{(item as Record<string, any>)[keyD]?.toString()}</td>;
+    });
+
+    return <tr key={index}>{columnData}</tr>;
+  };
+
+  const tableData = () => {
+    return form.items.map((e, index) => tableRows({ item: e, index }));
   };
 
   return (
@@ -152,25 +290,25 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         <Input
           label="Bill from"
           type="email"
-          value={from}
+          value={form.from}
           required
-          setValue={setFrom}
+          setValue={(v) => onChange("from", v)}
           id="fromEmail"
         />
 
         <Input
           label="Bill to"
           type="email"
-          value={to}
+          value={form.to}
           required
-          setValue={setTo}
+          setValue={(v) => onChange("to", v)}
           id="toEmail"
         />
 
         <Input
           label="Invoice date"
           type="date"
-          value={formatDateToYYYMMDD(createdDate)}
+          value={formatDateToYYYMMDD(form.createdDate)}
           setValue={() => {}}
           required
           id="invoiceDate"
@@ -180,7 +318,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         <SelectButton
           label="Payment terms"
           selected={getSelectedIndexTerms()}
-          onSelect={setSelectedTerms}
+          onSelect={(val) => onChange("selectedTerms", val)}
           defaultValue="Payment terms"
           showDefault
           options={terms}
@@ -191,8 +329,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         <Input
           label="Project description"
           type="text"
-          value={description}
-          setValue={setDescription}
+          value={form.description}
+          setValue={(val) => onChange("description", val)}
           required
           id="descriptiom"
         />
@@ -200,8 +338,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         <Input
           label="Amount"
           type="number"
-          value={amount.toString()}
-          setValue={(e: string) => setAmount(+e)}
+          value={form.amount.toString()}
+          setValue={(e: string) => onChange("amount", +e)}
           required
           min={0}
           id="amount"
@@ -211,12 +349,36 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           <SelectButton
             label="Save as draft?"
             selected={getSelectedIndexDraft()}
-            onSelect={(e) => setSaveAsDraft(e === "Yes" ? 1 : 0)}
+            onSelect={(e) => onChange("saveAsDraft", e === "Yes")}
             options={["Yes", "No"]}
             id="saveAsDraft"
             required
           />
         )}
+
+        <div className="table-container">
+          <span className="title">Items</span>
+
+          <CustomTable headRow={headRow} tableData={tableData}>
+            <col style={{ width: "33.75%" }} />
+            <col style={{ width: "18.75%" }} />
+            <col style={{ width: "18.75%" }} />
+            <col style={{ width: "18.75%" }} />
+            <col style={{ width: "10%" }} />
+          </CustomTable>
+
+          <Button
+            title="Add New Item"
+            type="button"
+            variant="secondary"
+            onClick={() =>
+              setForm((prev) => ({
+                ...prev,
+                items: [...prev.items, { name: "", price: 0, quantity: 0 }],
+              }))
+            }
+          />
+        </div>
 
         <div className="actions">
           <Button

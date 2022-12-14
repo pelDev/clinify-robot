@@ -19,7 +19,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       onClick={props.onClick}
       disabled={props.disabled || false}
     >
-      {props.title}
+      <span>{props.title}</span>
     </button>
   );
 };

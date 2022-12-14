@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
@@ -22,18 +22,28 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOneOrFail({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found!`);
+    }
+
+    return user;
   }
 
-  findOneByEmail(email: string) {
-    return this.userRepository.findOneOrFail({ where: { email } });
+  async findOneByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found!`);
+    }
+
+    return user;
   }
 
   async update(id: number, updateUserInput: UpdateUserInput) {
-    const user = await this.userRepository.findOneOrFail({
-      where: { id },
-    });
+    const user = await this.findOne(id);
 
     return this.userRepository.save({
       ...user,
@@ -42,11 +52,9 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    const invoice = await this.userRepository.findOneOrFail({
-      where: { id },
-    });
+    const user = await this.findOne(id);
 
-    const result = await this.userRepository.remove(invoice);
+    const result = await this.userRepository.remove(user);
 
     return { ...result, id };
   }

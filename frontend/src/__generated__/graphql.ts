@@ -20,10 +20,17 @@ export type CreateInvoiceInput = {
   amount?: InputMaybe<Scalars['Int']>;
   description: Scalars['String'];
   from: Scalars['String'];
-  saveAsDraft?: InputMaybe<Scalars['Int']>;
+  items: Array<CreateItemInput>;
+  saveAsDraft?: InputMaybe<Scalars['Boolean']>;
   status?: InputMaybe<Scalars['String']>;
   terms: Scalars['String'];
   to: Scalars['String'];
+};
+
+export type CreateItemInput = {
+  name: Scalars['String'];
+  price: Scalars['Int'];
+  quantity: Scalars['Int'];
 };
 
 export type CreateUserInput = {
@@ -51,19 +58,37 @@ export type Invoice = {
   updated_at: Scalars['DateTime'];
 };
 
+export type Item = {
+  __typename?: 'Item';
+  id: Scalars['Int'];
+  invoiceId: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Int'];
+  quantity: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createInvoice: Invoice;
+  createItem: Item;
   createUser: User;
   markAsPaid: Invoice;
   removeInvoice: Invoice;
+  removeItem: Item;
   removeUser: User;
   updateInvoice: Invoice;
+  updateItem: Item;
+  updateUser: User;
 };
 
 
 export type MutationCreateInvoiceArgs = {
   createInvoiceInput: CreateInvoiceInput;
+};
+
+
+export type MutationCreateItemArgs = {
+  createItemInput: CreateItemInput;
 };
 
 
@@ -82,6 +107,11 @@ export type MutationRemoveInvoiceArgs = {
 };
 
 
+export type MutationRemoveItemArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveUserArgs = {
   id: Scalars['Int'];
 };
@@ -91,16 +121,33 @@ export type MutationUpdateInvoiceArgs = {
   updateInvoiceInput: UpdateInvoiceInput;
 };
 
+
+export type MutationUpdateItemArgs = {
+  updateItemInput: UpdateItemInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  updateUserInput: UpdateUserInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   getInvoice: Invoice;
   invoices: Array<Invoice>;
+  item: Item;
+  items: Array<Item>;
   user: User;
   users: Array<User>;
 };
 
 
 export type QueryGetInvoiceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryItemArgs = {
   id: Scalars['Int'];
 };
 
@@ -114,6 +161,22 @@ export type UpdateInvoiceInput = {
   description: Scalars['String'];
   id: Scalars['Int'];
   terms: Scalars['String'];
+};
+
+export type UpdateItemInput = {
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Int'];
+  quantity: Scalars['Int'];
+};
+
+export type UpdateUserInput = {
+  city: Scalars['String'];
+  country: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  postcode: Scalars['String'];
+  street: Scalars['String'];
 };
 
 export type User = {

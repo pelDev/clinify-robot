@@ -1,10 +1,12 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Item } from 'src/items/entities/item.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -44,9 +46,9 @@ export class Invoice {
   @Field({ defaultValue: 'Draft' })
   status: 'Pending' | 'Paid' | 'Draft';
 
-  @Column({ type: 'int' })
+  // @Column({ type: 'int' })
   @Field((_) => Int, { defaultValue: 0 })
-  amount: number;
+  amount?: number;
 
   @Column({ type: 'date', default: 'NOW()' })
   @Field()
@@ -66,4 +68,8 @@ export class Invoice {
   })
   @Field()
   updated_at: Date;
+
+  @OneToMany(() => Item, (item) => item.invoice)
+  @Field(() => [Item])
+  items?: Item[];
 }

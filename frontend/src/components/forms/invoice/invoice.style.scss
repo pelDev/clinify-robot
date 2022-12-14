@@ -26,6 +26,27 @@
     animation: slide-in 0.5s forwards;
     // animation-delay: 2s;
 
+    .table-container {
+      span.title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .delete-button {
+        background-color: transparent;
+
+        .icon {
+          color: var(--textThemeColor1);
+          margin: auto;
+        }
+      }
+
+      button {
+        width: 100%;
+        margin-bottom: 16px;
+      }
+    }
+
     h1 {
       margin-bottom: 32px;
     }

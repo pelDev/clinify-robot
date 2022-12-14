@@ -1,0 +1,68 @@
+.custom-table {
+  width: 100%;
+  border: none;
+  table-layout: fixed;
+
+  td {
+    box-sizing: border-box;
+
+    text-align: start;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    vertical-align: middle;
+  }
+
+  tr {
+    td {
+      &:nth-child(1) {
+        border-left: none;
+      }
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    &:nth-child(1) {
+      td {
+        border-top: none;
+      }
+    }
+
+    &:last-child {
+      td {
+        border-bottom: none;
+      }
+    }
+  }
+
+  thead {
+    background-color: transparent;
+    text-align: start;
+  }
+
+  tbody {
+    font-size: 16px;
+  }
+
+  //   tbody {
+  //     font-family: "Montserrat";
+  //     font-style: normal;
+  //     font-weight: 400;
+  //     font-size: 16px;
+  //     line-height: 175%;
+  //     color: #adb5bd;
+
+  //     tr {
+  //       cursor: pointer;
+  //       transition: 0.3s ease;
+
+  //       &:hover {
+  //         color: #232d42;
+  //       }
+  //     }
+  //   }
+}

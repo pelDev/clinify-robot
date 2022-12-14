@@ -25,6 +25,7 @@ type Invoice {
   due_date: String!
   created_at: DateTime!
   updated_at: DateTime!
+  items: [Item!]!
 }
 
 """
@@ -32,11 +33,22 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Item {
+  id: Int!
+  name: String!
+  quantity: Int!
+  price: Int!
+  invoiceId: Int!
+  invoice: Invoice!
+}
+
 type Query {
   invoices: [Invoice!]!
   getInvoice(id: Int!): Invoice!
   users: [User!]!
   user(id: Int!): User!
+  items: [Item!]!
+  item(id: Int!): Item!
 }
 
 type Mutation {
@@ -47,6 +59,9 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User!
+  createItem(createItemInput: CreateItemInput!): Item!
+  updateItem(updateItemInput: UpdateItemInput!): Item!
+  removeItem(id: Int!): Item!
 }
 
 input CreateInvoiceInput {
@@ -55,8 +70,15 @@ input CreateInvoiceInput {
   terms: String!
   description: String!
   status: String = "Pending"
-  amount: Int = 0
-  saveAsDraft: Int = 0
+  items: [CreateItemInput!]!
+  saveAsDraft: Boolean = false
+}
+
+input CreateItemInput {
+  name: String!
+  quantity: Int!
+  price: Int!
+  invoiceId: Int
 }
 
 input UpdateInvoiceInput {
@@ -64,6 +86,15 @@ input UpdateInvoiceInput {
   terms: String!
   description: String!
   amount: Int = 0
+  items: [UpdateItemInput!]!
+}
+
+input UpdateItemInput {
+  name: String!
+  quantity: Int!
+  price: Int!
+  invoiceId: Int
+  id: Int
 }
 
 input CreateUserInput {

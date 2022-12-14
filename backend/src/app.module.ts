@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { getEnvPath } from './common/helper/env.helper';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ItemsModule } from './items/items.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
@@ -29,12 +30,16 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
         url: configService.get('DATABASE_URL'),
         entities: ['dist/**/*.entity{.ts,.js}'],
         synchronize: true,
-        ssl: { rejectUnauthorized: false },
+        ssl:
+          process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : undefined,
       }),
       inject: [ConfigService],
     }),
     InvoicesModule,
     UsersModule,
+    ItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

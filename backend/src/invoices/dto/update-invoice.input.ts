@@ -1,6 +1,7 @@
 import { Optional } from '@nestjs/common';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsDefined, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsDefined, IsNumber, IsString } from 'class-validator';
+import { UpdateItemInput } from 'src/items/dto/update-item.input';
 
 @InputType()
 export class UpdateInvoiceInput {
@@ -22,4 +23,9 @@ export class UpdateInvoiceInput {
   @IsNumber()
   @Field((type) => Int, { defaultValue: 0 })
   amount: number;
+
+  @IsDefined()
+  @IsArray()
+  @Field(() => [UpdateItemInput])
+  items?: UpdateItemInput[];
 }

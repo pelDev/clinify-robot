@@ -1,6 +1,14 @@
 import { Optional } from '@nestjs/common';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsDefined, IsEmail, IsIn, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsDefined,
+  IsEmail,
+  IsIn,
+  IsString,
+} from 'class-validator';
+import { CreateItemInput } from 'src/items/dto/create-item.input';
 
 @InputType()
 export class CreateInvoiceInput {
@@ -28,14 +36,18 @@ export class CreateInvoiceInput {
   @Field({ defaultValue: 'Pending' })
   status: 'Pending' | 'Paid' | 'Draft';
 
-  @Optional()
-  @IsNumber()
-  @Field((type) => Int, { defaultValue: 0 })
-  amount: number;
+  // @Optional()
+  // @IsNumber()
+  // @Field((type) => Int, { defaultValue: 0 })
+  // amount: number;
+
+  @IsDefined()
+  @IsArray()
+  @Field(() => [CreateItemInput])
+  items: CreateItemInput[];
 
   @Optional()
-  @IsNumber()
-  @IsIn([0, 1])
-  @Field((_) => Int, { defaultValue: 0 })
-  saveAsDraft: number;
+  @IsBoolean()
+  @Field(() => Boolean, { defaultValue: false })
+  saveAsDraft?: boolean;
 }

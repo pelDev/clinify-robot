@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateItemInput } from 'src/items/dto/update-item.input';
+import { Item } from 'src/items/entities/item.entity';
+import { ItemsService } from 'src/items/items.service';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
@@ -11,6 +14,7 @@ export class InvoicesService {
   constructor(
     @InjectRepository(Invoice) private invoiceRepository: Repository<Invoice>,
     private userService: UsersService,
+    private itemService: ItemsService,
   ) {}
 
   async paid(id: number) {
@@ -45,12 +49,11 @@ export class InvoicesService {
         break;
     }
 
-    if (createInvoiceInput.saveAsDraft === 1) {
+    if (createInvoiceInput.saveAsDraft) {
       createInvoiceInput.status = 'Draft';
     }
 
-    const newInvoice = this.invoiceRepository.create({
-      amount: createInvoiceInput.amount,
+    let newInvoice = this.invoiceRepository.create({
       description: createInvoiceInput.description,
       fromId: from.id,
       toId: to.id,
@@ -59,7 +62,26 @@ export class InvoicesService {
       due_date: due_date.toISOString(),
     });
 
-    return this.invoiceRepository.save(newInvoice);
+    newInvoice = await this.invoiceRepository.save(newInvoice);
+
+    const items: Item[] = [];
+    let amount = 0;
+
+    for (const item of createInvoiceInput.items) {
+      const newItem = await this.itemService.create({
+        ...item,
+        invoiceId: newInvoice.id,
+      });
+
+      amount += item.price * item.quantity;
+
+      items.push(newItem);
+    }
+
+    newInvoice.items = items;
+    newInvoice.amount = amount;
+
+    return newInvoice;
   }
 
   async findAll(): Promise<Invoice[]> {
@@ -67,7 +89,24 @@ export class InvoicesService {
   }
 
   async findOne(id: number): Promise<Invoice> {
-    return this.invoiceRepository.findOneOrFail({ where: { id } });
+    const invoice = await this.invoiceRepository.findOne({
+      where: { id },
+      relations: ['items'],
+    });
+
+    if (!invoice) {
+      throw new NotFoundException(`Invoice with id ${id} not found!`);
+    }
+
+    let amount = 0;
+
+    for (const item of invoice.items!) {
+      amount += item.price * item.quantity;
+    }
+
+    invoice.amount = amount;
+
+    return invoice;
   }
 
   async updateInvoice(
@@ -75,9 +114,36 @@ export class InvoicesService {
   ): Promise<Invoice> {
     const invoice = await this.invoiceRepository.findOneOrFail({
       where: { id: updateInvoiceInput.id },
+      relations: ['items'],
     });
 
     const due_date = new Date(invoice.created_at);
+
+    const removedItems = invoice
+      .items!.map((e) => e.id)
+      .filter((e) => !updateInvoiceInput.items!.map((e) => e.id).includes(e));
+
+    const items: UpdateItemInput[] = [];
+
+    for (let item of updateInvoiceInput.items!) {
+      if (item.id) {
+        console.log('Update', item);
+        item = await this.itemService.update(item.id, {
+          ...item,
+        });
+      } else {
+        item = await this.itemService.create({
+          ...item,
+          invoiceId: invoice.id,
+        });
+      }
+
+      items.push(item);
+    }
+
+    for (const id of removedItems) {
+      await this.itemService.remove(id);
+    }
 
     if (updateInvoiceInput.terms)
       switch (updateInvoiceInput.terms) {
@@ -89,6 +155,9 @@ export class InvoicesService {
           due_date.setDate(due_date.getDate() + 90);
           break;
       }
+
+    delete updateInvoiceInput.items;
+    delete invoice.items;
 
     return this.invoiceRepository.save({
       ...invoice,
@@ -105,5 +174,9 @@ export class InvoicesService {
     const result = await this.invoiceRepository.remove(invoice);
 
     return { ...result, id };
+  }
+
+  async getItems(id: number): Promise<Item[]> {
+    return this.itemService.findByInvoice(id);
   }
 }
